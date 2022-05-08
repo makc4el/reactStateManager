@@ -1,14 +1,8 @@
 
-import React, { useReducer, useMemo } from 'react';
+import React, { useReducer } from 'react';
+import { History } from './history/history.component';
+import { ACTION_TYPE } from './../../shared/models/types';
 import './board.component.css';
-const ACTION_TYPE = {
-    SAVE: 'SAVE',
-    REDO: 'REDO',
-    UNDO: 'UNDO',
-    CLEAR: 'CLEAR',
-    MOVE: 'MOVE',
-    UPDATE: 'UPDATE'
-};
 
 function update(state, value) {
     return {
@@ -94,16 +88,6 @@ function reducer(state, action) {
     }
 }
 
-function renderList(list, dispatch) {
-    return list.map((data, index) => {
-        return (
-            <li className="history-item" key={index}>
-                <button className="history-item-btn" onClick={() => dispatch({ type: ACTION_TYPE.MOVE, index: index })}>{data}</button>
-            </li>
-        )
-    });
-}
-
 export function Board() {
     const initialState = {
         current: {
@@ -113,11 +97,10 @@ export function Board() {
         history: []
     };
     const [state, dispatch] = useReducer(reducer, initialState);
-    const historyList = useMemo(() => renderList(state.history, dispatch), [state.history, dispatch]);
 
     return (
         <div className="container">
-            <form className="board-form">
+            <form onSubmit={(e) => e.preventDefault()} className="board-form">
                 <div className="form-row">
                     <div className="form-column">
                         <input className="form-input" type="text" name="info" placeholder="Please add any text here" value={state.current.value} onChange={e => dispatch({ type: ACTION_TYPE.UPDATE, value: e.target.value})}/>
@@ -130,9 +113,10 @@ export function Board() {
                 </div>
                 <div className="form-row">
                     <div className="form-column">
-                        <ol className="history-list">
-                           {historyList}
-                        </ol>
+                        <History 
+                            list={state.history}
+                            onClick={(index) => dispatch({ type: ACTION_TYPE.MOVE, index: index})}
+                        />
                     </div>
                     <div className="form-column">
                         <button className="form-button" type="button" onClick={e => dispatch({ type: ACTION_TYPE.SAVE, value: e.target.form.info.value })}>SAVE</button>

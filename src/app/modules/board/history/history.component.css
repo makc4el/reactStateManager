@@ -1,0 +1,24 @@
+.history-list {
+    margin: 0;
+    font-size: 18px;
+    font-family: sans-serif;
+}
+
+.history-item {
+    margin-bottom: 10px;
+}
+
+.history-item-btn {
+    width: 100%;
+    height: 50px;
+    font-size: 18px;
+    background: #585858;
+    border: 2px solid #585858;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.history-item-btn:hover {
+    outline: 5px solid #76cbf2;
+}
