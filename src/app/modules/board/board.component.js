@@ -5,11 +5,15 @@ import { ACTION_TYPE } from './../../shared/models/types';
 import './board.component.css';
 
 function update(state, value) {
+    const updateHistory = state.current.history.slice();
+    updateHistory.push(value);
+
     return {
         history: state.history,
         current: {
+            history: updateHistory,
             value: value,
-            index: state.current.index
+            index: updateHistory.length - 1
         },
     }
 }
@@ -23,6 +27,7 @@ function save(state, value) {
     return {
         history: updateHistory,
         current: {
+            history: [''],
             value: '',
             index: updateHistory.length
         },
@@ -34,9 +39,10 @@ function undo(state) {
     const updatedIndex = index < 0 ? 0 : index;
 
     return {
-        history: state.history,
+        ...state,
         current: {
-            value: state.history[updatedIndex],
+            history: state.current.history,
+            value: state.current.history[updatedIndex],
             index: updatedIndex
         },
     }
@@ -44,12 +50,13 @@ function undo(state) {
 
 function redo(state) {
     const index = state.current.index + 1;
-    const updatedIndex = index > (state.history.length - 1) ? state.history.length - 1 : index;
+    const updatedIndex = index > (state.current.history.length - 1) ? state.current.history.length - 1 : index;
 
     return {
-        history: state.history,
+        ...state,
         current: {
-            value: state.history[updatedIndex],
+            history: state.current.history,
+            value: state.current.history[updatedIndex],
             index: updatedIndex
         },
     }
@@ -65,8 +72,9 @@ function move(state, index) {
     return {
         history: state.history,
         current: {
+            history: ['', state.history[index]],
             value: state.history[index],
-            index: index
+            index: state.history.length
         },
     }
 }
@@ -92,6 +100,7 @@ export function Board() {
     const initialState = {
         current: {
             value: '',
+            history: [''],
             index: 0
         },
         history: []
